@@ -1,0 +1,24 @@
+{
+  "name": "kasperrt/simplesamlphp-module-dataportenoauth2",
+  "description": "Provides OAuth2 dataporten as a connection option for providers in SimpleSAMLphp.",
+  "license": "MIT",
+  "keywords": ["authentication"],
+  "type": "simplesamlphp-module",
+  "homepage": "https://github.com/kasperrt/simplesamlphp-module-dataportenoauth2",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Kasper Rynning-Tønnesen",
+      "homepage": "https://kasperrt.no"
+    }
+  ],
+  "require": {
+    "kasperrt/oauth2-client": "dev-master",
+    "simplesamlphp/composer-module-installer": "~1.1.4",
+    "simplesamlphp/simplesamlphp": "~1.0"
+  },
+  "autoload": {
+    "classmap": ["src/Auth/Source/"],
+    "psr-4": {"SSPOpenIdConnect\\": "src"}
+  }
+}

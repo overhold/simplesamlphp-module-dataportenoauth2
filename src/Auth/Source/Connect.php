@@ -111,6 +111,7 @@ class sspmod_dataportenoauth2_Auth_Source_Connect extends SimpleSAML_Auth_Source
           $u = array($u);
         }
       }
+      $user['user']['profilephoto'][0] = "https://api.dataporten.no/userinfo/v1/user/media/" . $user['user']['profilephoto'][0];
       $mapped = array(
         'uid' => $user['user']['userid'],
         'mail' => $user['user']['email'],
@@ -122,6 +123,7 @@ class sspmod_dataportenoauth2_Auth_Source_Connect extends SimpleSAML_Auth_Source
           $u = array($u);
         }
       }
+      $user['profilephoto'][0] = "https://api.dataporten.no/userinfo/v1/user/media/" . $user['profilephoto'][0];
       $mapped = array(
         'uid' => $user['userid'],
         'mail' => $user['email'],

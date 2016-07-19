@@ -48,10 +48,11 @@ class sspmod_dataportenoauth2_Auth_Source_Connect extends SimpleSAML_Auth_Source
   protected function getConfig() {
     return array(
       'client_id' => $this->client_id,
+      'client_secret' => $this->client_secret,
       'redirect_uri' => SimpleSAML_Module::getModuleURL('dataportenoauth2/resume.php'),
-      'auth' => self::auth_endpoint,
-      'token' => self::token_endpoint,
-      'user' => self::user_endpoint,
+      'auth' => self::$auth_endpoint,
+      'token' => self::$token_endpoint,
+      'user' => self::$user_endpoint,
     );
   }
 
@@ -64,11 +65,12 @@ class sspmod_dataportenoauth2_Auth_Source_Connect extends SimpleSAML_Auth_Source
     $state['dataportenoauth2:AuthID'] = $this->authId;
     $state_id = SimpleSAML_Auth_State::saveState($state, 'dataportenoauth2:Connect', TRUE);
     $info = $this->getConfig($state_id);
+
     HTTP::redirectTrustedURL($info['auth'], array(
       "client_id"     => $info["client_id"],
       "redirect_uri"  => $info["redirect_uri"],
       "response_type" => "code",
-      "state"         => $stateId
+      "state"         => $state_id,
     ));
   }
 
@@ -103,20 +105,38 @@ class sspmod_dataportenoauth2_Auth_Source_Connect extends SimpleSAML_Auth_Source
   }
 
   protected static function getAttributes($user) {
-    return array(
-      'uid'     => $user['userid'] ? $user['userid'] : $user['user']['userid'] ? $user['user']['userid'] : "",
-      'mail'    => $user['email'] ? $user['email'] : $user['user']['email'] ? $user['user']['email'] : "",
-      'picture' => $user['picture'] ? $user['picture'] : $user['user']['picture'] ? $user['user']['picture'] : "",
-      'name'    => $user['name'] ? $user['name'] : $user['user']['name'] ? $user['user']['name'] : "",
-    ) + $user;
+    if($user['user']) {
+      foreach ($user['user'] as &$u) {
+        if (!is_array($u)) {
+          $u = array($u);
+        }
+      }
+      $mapped = array(
+        'uid' => $user['user']['userid'],
+        'mail' => $user['user']['email'],
+        'picture' => $user['user']['profilephoto'],
+      );
+    } else {
+      foreach ($user as &$u) {
+        if (!is_array($u)) {
+          $u = array($u);
+        }
+      }
+      $mapped = array(
+        'uid' => $user['userid'],
+        'mail' => $user['email'],
+        'picture' => $user['profilephoto'],
+      );
+    }
+    return $mapped;
   }
 
   public static function resume() {
     $request = Request::fromString($_SERVER['REQUEST_METHOD'] . ' ' . self::requesturi());
-    if (!$stateId = $request->getQuery('state')) {
+    if (!$state_id = $request->getQuery('state')) {
       throw new SimpleSAML_Error_BadRequest('Missing "state" parameter.');
     }
-    $state = SimpleSAML_Auth_State::loadState($stateId, 'dataportenoauth2:Connect');
+    $state = SimpleSAML_Auth_State::loadState($state_id, 'dataportenoauth2:Connect');
     /*
      * Now we have the $state-array, and can use it to locate the authentication
      * source.
@@ -146,16 +166,18 @@ class sspmod_dataportenoauth2_Auth_Source_Connect extends SimpleSAML_Auth_Source
       throw new SimpleSAML_Error_Exception('Authentication source type changed.');
     }
 
-    $ouath_client = new OAuth2($source->getConfig());
-    $access_token = $oauth_client->get_access_token($code);
-    $identity     = $oauth_client->get_identity($access_token);
+    $oauth_client = new OAuth2($source->getConfig());
+    $access_token = $oauth_client->get_access_token($state_id, $code);
+
+
+    $identity     = $oauth_client->get_identity($access_token, self::$user_endpoint);
     if(count($identity) < 1) {
       /**
        * The user isn't authenticated
        */
       throw new SimpleSAML_Error_Exception('User not authenticated after login attempt.', $e->getCode(), $e);
     }
-    $state['Attributes'] = self:getAttributes($identity);
+    $state['Attributes'] = self::getAttributes($identity);
     SimpleSAML_Auth_Source::completeAuth($state);
     /*
      * The completeAuth-function never returns, so we never get this far.

@@ -13,7 +13,7 @@
     }
   ],
   "require": {
-    "kasperrt/oauth2-client": "dev-master",
+    "kasperrt/oauth2-client": "~1.1",
     "simplesamlphp/composer-module-installer": "~1.1.4",
     "simplesamlphp/simplesamlphp": "~1.0"
   },

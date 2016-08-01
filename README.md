@@ -1,3 +1,5 @@
 # simplesamlphp-module-dataportenoauth2
 
-Authentication module for SimpleSAMLPHP with Dataporten as provider.
+Dataporten OAuth 2.0 module for SimpleSAMLphp
+
+To install, run ```composer require kasperrt/simplesamlphp-module-dataportenoauth2 dev-master```  in /var/simplesamlphp, and add the settings from template/authsources-template-addition.php to /var/simplesamlphp/config/authsources.php.

@@ -1,10 +1,10 @@
 {
-  "name": "kasperrt/simplesamlphp-module-dataportenoauth2",
+  "name": "overhold/simplesamlphp-module-dataportenoauth2",
   "description": "Provides OAuth2 dataporten as a connection option for providers in SimpleSAMLphp.",
   "license": "MIT",
   "keywords": ["authentication"],
   "type": "simplesamlphp-module",
-  "homepage": "https://github.com/kasperrt/simplesamlphp-module-dataportenoauth2",
+  "homepage": "https://github.com/overhold/simplesamlphp-module-dataportenoauth2",
   "minimum-stability": "dev",
   "authors": [
     {

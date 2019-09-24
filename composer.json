@@ -15,7 +15,8 @@
   "require": {
     "kasperrt/oauth2-client": "~1.2",
     "zendframework/zend-http": "~2.5.5",
-    "simplesamlphp/composer-module-installer": "~1.1.4"
+    "simplesamlphp/composer-module-installer": "~1.1.4",
+    "simplesamlphp/simplesamlphp": "~1.0"
   },
   "autoload": {
     "classmap": ["src/Auth/Source/"],
